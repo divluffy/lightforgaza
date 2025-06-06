@@ -66,7 +66,7 @@ export default function ShareSection({ campaignId, title }: Props) {
           {/* زر نسخ الرابط (ملون) */}
           <button
             onClick={copyLink}
-            className="flex flex-col items-center justify-center gap-1 text-purple-600 hover:text-purple-800"
+            className="cursor-pointer flex flex-col items-center justify-center gap-1 text-purple-600 hover:text-purple-800"
           >
             <FaCopy size={20} />
             <span>نسخ</span>
@@ -75,7 +75,7 @@ export default function ShareSection({ campaignId, title }: Props) {
           {/* زر QR (ملون) */}
           <button
             onClick={() => setShowQRModal(true)}
-            className="flex flex-col items-center justify-center gap-1 text-green-600 hover:text-green-800"
+            className="cursor-pointer flex flex-col items-center justify-center gap-1 text-green-600 hover:text-green-800"
           >
             <FaQrcode size={20} />
             <span>QR</span>

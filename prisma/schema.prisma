@@ -85,6 +85,10 @@ model Donation {
   userId       String? // إذا كان المتبرِّع مستخدمًا مسجّلًا
   user         User?    @relation(fields: [userId], references: [id])
   campaignId   String // مُعرّف الحملة
+  walletType   String // نوع المحفظة: phantom، metamask، coinbase، trust
+  currency     String // العملة: SOL أو ETH أو BTC
+  solSignature String?
+  signature    String? // توقيع المعاملة أو الـ transaction hash
   campaign     Campaign @relation(fields: [campaignId], references: [id])
   createdAt    DateTime @default(now())
 }
