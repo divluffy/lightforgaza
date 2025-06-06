@@ -59,15 +59,18 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang={locale} dir={dir}>
+    <html lang={locale} dir={dir} suppressHydrationWarning>
       <Head>
         <title>{titles[locale]}</title>
         <meta name="description" content={descriptions[locale]} />
         <link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
       </Head>
 
-      <body className={`${allFonts} antialiased min-h-screen flex flex-col`}>
-        <NextIntlClientProvider locale={locale} timeZone={""}>
+      <body
+        className={`${allFonts} antialiased min-h-screen flex flex-col`}
+        suppressHydrationWarning
+      >
+        <NextIntlClientProvider locale={locale}>
           <Providers>
             <Navbar
               currentLocale={locale}

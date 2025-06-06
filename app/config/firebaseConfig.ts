@@ -4,7 +4,18 @@ import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
 import { getFirestore } from "firebase/firestore";
 
-const firebaseConfig = {
+const isDeve = true;
+const firebaseConfigDev = {
+  apiKey: "AIzaSyDXPm3Ws0i3_fuc7mNbrOgPLssvWvBnny8",
+  authDomain: "light-for-gaza.firebaseapp.com",
+  projectId: "light-for-gaza",
+  storageBucket: "light-for-gaza.firebasestorage.app",
+  messagingSenderId: "1023421028034",
+  appId: "1:1023421028034:web:a31497d63e16931faacd5b",
+  measurementId: "G-VTGWCY63FD",
+};
+
+const firebaseConfigProd = {
   apiKey: "AIzaSyCQaVpqtdcUZjA9GSsxDVPMMmXAdhml7k4",
   authDomain: "ultra-gizmo.firebaseapp.com",
   databaseURL:
@@ -16,18 +27,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase App
-const app = initializeApp(firebaseConfig);
-
-// لا تستدعي getAnalytics هنا كي لا يحاول الوصول إلى window أثناء SSR
-// إذا أردت تفعيل التحليلات، يمكنك فعل ذلك في useEffect داخل مكوّن client-only.
-// مثال داخل مكوّن React:
-// useEffect(() => {
-//   if (typeof window !== "undefined") {
-//     import("firebase/analytics").then(({ getAnalytics }) => {
-//       getAnalytics(app);
-//     });
-//   }
-// }, []);
+const app = initializeApp(isDeve ? firebaseConfigDev : firebaseConfigProd);
 
 const storage = getStorage(app);
 const firestore = getFirestore(app);

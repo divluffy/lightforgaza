@@ -1,9 +1,15 @@
 // app/campaigns/[id]/page.tsx
-
-import { PrismaClient, Campaign } from "@prisma/client";
+import { PrismaClient, GazaGovernorate } from "@prisma/client";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import React from "react";
+import DonationSidebar from "../../components/DonationSidebar";
+import ShareSection from "../../components/ShareSection";
+import {
+  FaCheckCircle,
+  FaFacebook,
+  FaInstagram,
+  FaTiktok,
+} from "react-icons/fa";
 
 const prisma = new PrismaClient();
 
@@ -11,29 +17,38 @@ type Props = {
   params: { id: string };
 };
 
-type VideoLink = { type: "youtube" | "direct" | "embed"; value: string };
-
-// نعرّف نوع المتبرع الوهمي مؤقتًا
-type FakeDonor = {
-  name: string;
-  amount: number;
-  message?: string;
-  date: string;
+// ترجمة enum الخاصة بمحافظات غزة إلى نص عربي
+const governorateLabels: Record<GazaGovernorate, string> = {
+  GAZA: "محافظة غزة",
+  NORTH_GAZA: "محافظة شمال غزة",
+  KHAN_YUNIS: "محافظة خان يونس",
+  RAFAH: "محافظة رفح",
+  DEIR_AL_BALAH: "محافظة دير البلح",
 };
 
 export default async function CampaignDetail({ params }: Props) {
   const { id } = params;
 
-  // جلب الحملة مع بيانات المالك
+  // جلب الحملة مع بيانات صاحبها
   const campaign:
-    | (Campaign & {
-        owner: { name: string | null; email: string };
+    | (Awaited<ReturnType<typeof prisma.campaign.findUnique>> & {
+        owner: {
+          name: string | null;
+          email: string;
+          thumbnailUrl: string | null;
+          governorate: GazaGovernorate;
+        };
       })
     | null = await prisma.campaign.findUnique({
     where: { id },
     include: {
       owner: {
-        select: { name: true, email: true },
+        select: {
+          name: true,
+          email: true,
+          thumbnailUrl: true,
+          governorate: true,
+        },
       },
     },
   });
@@ -42,12 +57,21 @@ export default async function CampaignDetail({ params }: Props) {
     notFound();
   }
 
-  // إذا كان campaign.videoLinks مخزنًا كـ JSON، نحتاج لتحويله لنوع VideoLink[]
-  const videoLinks: VideoLink[] = Array.isArray(campaign.videoLinks)
-    ? (campaign.videoLinks as VideoLink[])
+  // استخرج الفيديوهات من campaign.videoLinks.set
+  type VideoLink = { type: "youtube" | "direct" | "embed"; value: string };
+  const videoLinks: VideoLink[] = Array.isArray(
+    (campaign.videoLinks as any)?.set
+  )
+    ? (campaign.videoLinks as any).set
     : [];
 
-  // بيانات وهمية للمتبرعين لعرض التصميم حاليًا
+  // بيانات وهمية للمتبرعين
+  type FakeDonor = {
+    name: string;
+    amount: number;
+    message?: string;
+    date: string;
+  };
   const fakeDonors: FakeDonor[] = [
     {
       name: "أحمد محمد",
@@ -61,147 +85,89 @@ export default async function CampaignDetail({ params }: Props) {
       message: "جزاكم الله خيرًا",
       date: "2025-05-18",
     },
+    { name: "خالد حسين", amount: 20, date: "2025-05-15" },
     {
-      name: "خالد حسين",
-      amount: 20,
-      date: "2025-05-15",
+      name: "ليلى محمود",
+      amount: 75,
+      message: "دعم بسيط مع خالص الحب",
+      date: "2025-05-14",
     },
-    // يُمكن إضافة المزيد حسب الحاجة
+    { name: "محمد أبو ريا", amount: 200, date: "2025-05-12" },
+    {
+      name: "نور الدين علي",
+      amount: 30,
+      message: "إلى الأمام دائمًا",
+      date: "2025-05-10",
+    },
+    { name: "هند عبد الرحمن", amount: 60, date: "2025-05-08" },
+    {
+      name: "سالم الجندي",
+      amount: 100,
+      message: "خالص الدعاء بالتوفيق",
+      date: "2025-05-05",
+    },
   ];
 
+  // أعلى ثلاثة متبرعين
+  const topDonors = [...fakeDonors]
+    .sort((a, b) => b.amount - a.amount)
+    .slice(0, 3);
+
   return (
-    <div className="container mx-auto p-8">
-      <div className="card bg-base-100 shadow-lg">
-        <div className="card-body space-y-6">
-          {/* ===== Header: العنوان ومالك الحملة وتاريخ الإنشاء ===== */}
-          <div className="flex flex-col md:flex-row md:justify-between md:items-start">
-            <div>
-              <h1 className="text-4xl font-bold mb-2">{campaign.title}</h1>
-              <p className="text-gray-500">
-                أنشأها:{" "}
-                <span className="font-medium">
-                  {campaign.owner.name || campaign.owner.email}
-                </span>
-              </p>
-              <p className="text-gray-500 mt-1">
-                تاريخ الإنشاء:{" "}
-                <span className="font-medium">
-                  {new Date(campaign.createdAt).toLocaleDateString("ar-EG", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </span>
-              </p>
-            </div>
+    <div className="container mx-auto px-4 py-8 pt-32">
+      <div className="flex flex-col lg:flex-row lg:space-x-8">
+        {/* ===== اليسار: محتوى الحملة ===== */}
+        <div className="flex-1 space-y-8">
+          {/* 1) العنوان */}
+          <h1 className="text-4xl font-bold">{campaign.title}</h1>
 
-            {/* نوع الحملة */}
-            <div className="mt-4 md:mt-0">
-              <span className="badge badge-primary text-lg">
-                {campaign.campaignType}
-              </span>
-            </div>
-          </div>
-
-          {/* ===== صورة الغلاف ===== */}
+          {/* 2) صورة الغلاف */}
           <div>
             <img
               src={campaign.imageUrl}
               alt="Cover Image"
-              className="w-full max-h-96 object-cover rounded-lg"
+              className="w-full max-h-96 object-cover rounded-lg shadow"
             />
           </div>
 
-          {/* ===== الوصف (Rich Text HTML) ===== */}
-          <div className="prose prose-arabic">
-            {/* نعرض المحتوى كما هو (HTML) */}
-            <div
-              dangerouslySetInnerHTML={{ __html: campaign.description }}
-            ></div>
+          {/* 3) الوصف مع تباعد الأسطر */}
+          <div className="whitespace-pre-line text-lg leading-relaxed mb-6">
+            {campaign.description}
           </div>
 
-          {/* ===== روابط التواصل الاجتماعي (إذا وُجدت) ===== */}
-          {(campaign.facebookUrl ||
-            campaign.instagramUrl ||
-            campaign.tiktokUrl) && (
-            <div className="space-y-2">
-              <h2 className="text-2xl font-semibold">روابط التواصل</h2>
-              <div className="flex flex-col sm:flex-row gap-4">
-                {campaign.facebookUrl && (
-                  <a
-                    href={campaign.facebookUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-outline btn-sm"
-                  >
-                    فيسبوك
-                  </a>
-                )}
-                {campaign.instagramUrl && (
-                  <a
-                    href={campaign.instagramUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-outline btn-sm"
-                  >
-                    إنستغرام
-                  </a>
-                )}
-                {campaign.tiktokUrl && (
-                  <a
-                    href={campaign.tiktokUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-outline btn-sm"
-                  >
-                    تيك توك
-                  </a>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* ===== روابط الفيديو (إن وُجدت) ===== */}
+          {/* 4) عرض جميع الفيديوهات إن وجدت */}
           {videoLinks.length > 0 && (
-            <div className="space-y-2">
-              <h2 className="text-2xl font-semibold">روابط الفيديو</h2>
-              <div className="grid grid-cols-1 gap-4">
+            <div className="mt-6 space-y-4">
+              <h2 className="text-2xl font-semibold">فيديوهات الحملة</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {videoLinks.map((vl, idx) => (
-                  <div key={idx} className="border p-4 rounded-lg">
+                  <div
+                    key={idx}
+                    className="border rounded-lg p-2 bg-base-50 dark:bg-base-200"
+                  >
                     {vl.type === "youtube" && (
-                      <div>
-                        <p className="font-medium">رابط يوتيوب:</p>
-                        <a
-                          href={vl.value}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 underline"
-                        >
-                          {vl.value}
-                        </a>
+                      <div className="aspect-video">
+                        <iframe
+                          src={vl.value.replace("watch?v=", "embed/")}
+                          allowFullScreen
+                          className="w-full h-full rounded"
+                        ></iframe>
                       </div>
                     )}
                     {vl.type === "direct" && (
-                      <div>
-                        <p className="font-medium">رابط فيديو مباشر:</p>
-                        <a
-                          href={vl.value}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 underline"
-                        >
-                          {vl.value}
-                        </a>
-                      </div>
+                      <video
+                        controls
+                        src={vl.value}
+                        className="w-full h-auto rounded"
+                      ></video>
                     )}
                     {vl.type === "embed" && (
-                      <div>
-                        <p className="font-medium">كود مضمّن:</p>
-                        <div
-                          className="mt-2"
-                          dangerouslySetInnerHTML={{ __html: vl.value }}
-                        ></div>
-                      </div>
+                      <div
+                        className="mt-2"
+                        dangerouslySetInnerHTML={{
+                          __html: vl.value,
+                        }}
+                      ></div>
                     )}
                   </div>
                 ))}
@@ -209,82 +175,140 @@ export default async function CampaignDetail({ params }: Props) {
             </div>
           )}
 
-          {/* ===== معلومات الهدف والتبرعات ورسالة الشكر ===== */}
-          <div className="space-y-2">
-            <h2 className="text-2xl font-semibold">التفاصيل المالية</h2>
-            <p className="text-lg">
-              المبلغ الراهن:{" "}
-              <span className="font-semibold">
-                {campaign.currentAmount} USD
-              </span>{" "}
-              من هدف{" "}
-              <span className="font-semibold">{campaign.goalAmount} USD</span>
-            </p>
-            <progress
-              className="progress progress-primary w-full"
-              value={campaign.currentAmount}
-              max={campaign.goalAmount}
-            ></progress>
-            <p className="mt-2">
-              رسالة الشكر القصيرة:{" "}
-              <span className="font-medium">{campaign.thankYouMessage}</span>
-            </p>
-          </div>
-
-          {/* ===== زر التبرّع (حاليًا يوجه إلى صفحة خارجية أو placeholder) ===== */}
-          <div className="card-actions justify-end">
-            <Link
-              href={`/donations?campaignId=${campaign.id}`}
-              className="btn btn-primary btn-lg"
-            >
-              🌟 تبرّع الآن
-            </Link>
-          </div>
-
-          {/* ===== قسم المتبرعين (عرض بيانات وهمية حاليًا) ===== */}
-          <div className="mt-6">
-            <h2 className="text-2xl font-semibold mb-4">أحدث المتبرعين</h2>
-            {fakeDonors.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {fakeDonors.map((donor, idx) => (
-                  <div
-                    key={idx}
-                    className="border rounded-lg p-4 hover:shadow transition-shadow"
-                  >
-                    <p>
-                      اسم المتبرع:{" "}
-                      <span className="font-medium">{donor.name}</span>
-                    </p>
-                    <p>
-                      المبلغ:{" "}
-                      <span className="font-semibold">{donor.amount} USD</span>
-                    </p>
-                    {donor.message && (
-                      <p className="italic">رسالة: "{donor.message}"</p>
-                    )}
-                    <p className="text-gray-500 text-sm mt-2">
-                      التاريخ:{" "}
-                      {new Date(donor.date).toLocaleDateString("ar-EG", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </p>
-                  </div>
-                ))}
+          {/* 5) معلومات المنشئ مع أيقونات التواصل الاجتماعي */}
+          <div className="border rounded-lg p-4 bg-base-100 dark:bg-base-200 shadow flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+            <div className="flex items-center space-x-4">
+              {campaign.owner.thumbnailUrl && (
+                <img
+                  src={campaign.owner.thumbnailUrl}
+                  alt="Owner Thumbnail"
+                  className="h-12 w-12 rounded-full object-cover"
+                />
+              )}
+              <div>
+                <p className="text-lg font-medium flex items-center gap-2">
+                  {campaign.owner.name || campaign.owner.email}{" "}
+                  <FaCheckCircle className="text-blue-500" title="تم التحقق" />
+                </p>
+                <p className="text-gray-500 text-sm">
+                  {governorateLabels[campaign.owner.governorate]}
+                </p>
+                <p className="text-gray-500 text-sm">
+                  أنشئت في:{" "}
+                  <span className="font-medium">
+                    {new Date(campaign.createdAt).toLocaleDateString("ar-EG", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </span>
+                </p>
               </div>
-            ) : (
-              <p className="text-gray-600">لا توجد تبرعات حتى الآن.</p>
-            )}
+            </div>
+            <div className="flex items-center space-x-4">
+              {campaign.facebookUrl && (
+                <a
+                  href={campaign.facebookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook"
+                  className="text-blue-600 hover:text-blue-800"
+                >
+                  <FaFacebook size={24} />
+                </a>
+              )}
+              {campaign.instagramUrl && (
+                <a
+                  href={campaign.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram"
+                  className="text-pink-500 hover:text-pink-700"
+                >
+                  <FaInstagram size={24} />
+                </a>
+              )}
+              {campaign.tiktokUrl && (
+                <a
+                  href={campaign.tiktokUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="TikTok"
+                  className="text-black hover:text-gray-800"
+                >
+                  <FaTiktok size={24} />
+                </a>
+              )}
+            </div>
+          </div>
+
+          {/* 6) أحدث المتبرعين */}
+          <div>
+            <h2 className="text-2xl font-semibold mb-4 text-center">
+              أحدث المتبرعين
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {fakeDonors.map((donor, idx) => (
+                <div
+                  key={idx}
+                  className="border rounded-lg p-2 bg-base-50 dark:bg-base-200 hover:shadow transition-shadow text-sm"
+                >
+                  <p>
+                    <span className="font-medium">{donor.name}</span> –{" "}
+                    <span className="font-semibold">{donor.amount} USD</span>
+                  </p>
+                  {donor.message && (
+                    <p className="italic text-xs mt-1">"{donor.message}"</p>
+                  )}
+                  <p className="text-gray-500 text-xs mt-1">
+                    {new Date(donor.date).toLocaleDateString("ar-EG", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 7) زر الرجوع */}
+          <div className="mt-12 text-center">
+            <a href="/campaigns" className="btn btn-outline">
+              ← العودة إلى قائمة الحملات
+            </a>
           </div>
         </div>
-      </div>
 
-      {/* زر رجوع إلى قائمة الحملات */}
-      <div className="mt-6">
-        <Link href="/campaigns" className="btn btn-outline">
-          ← العودة إلى قائمة الحملات
-        </Link>
+        {/* ===== اليمين: Sidebar ثابت ===== */}
+        <div className="w-full lg:w-1/3 flex-shrink-0 mt-8 lg:mt-0">
+          <div className="sticky top-32 space-y-6">
+            <DonationSidebar
+              campaignId={campaign.id}
+              currentAmount={campaign.currentAmount}
+              goalAmount={campaign.goalAmount}
+            />
+
+            <ShareSection campaignId={campaign.id} title={campaign.title} />
+
+            <div className="border rounded-lg p-4 bg-base-50 dark:bg-base-200 shadow">
+              <h3 className="text-xl font-semibold mb-3 text-center">
+                الأعلى تبرعًا
+              </h3>
+              <ul className="space-y-2">
+                {topDonors.map((donor, idx) => (
+                  <li
+                    key={idx}
+                    className="flex justify-between items-center text-sm"
+                  >
+                    <span>{donor.name}</span>
+                    <span className="font-semibold">{donor.amount} USD</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
