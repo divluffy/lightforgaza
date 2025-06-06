@@ -1,0 +1,112 @@
+{
+  "g": {
+    "home": "Ana Sayfa"
+  },
+
+  "contact": {
+    "title": "Bize Ulaşın",
+    "description": "Herhangi bir sorunuz, öneriniz veya işbirliği talebiniz varsa, lütfen aşağıdaki formu doldurun; en kısa sürede size geri döneceğiz. İlginiz için teşekkür ederiz!",
+    "fullNameLabel": "Ad Soyad",
+    "fullNamePlaceholder": "Adınızı girin",
+    "emailLabel": "E-posta Adresi",
+    "emailPlaceholder": "example@mail.com",
+    "phoneLabel": "Telefon Numarası",
+    "phonePlaceholder": "+90 532 123 4567",
+    "subjectLabel": "Konu",
+    "subjectPlaceholder": "Talebinizin konusu",
+    "messageLabel": "Mesaj",
+    "messagePlaceholder": "Mesajınızı buraya yazın...",
+    "submitButton": "Mesajı Gönder",
+    "successMessage": "Mesajınız başarıyla gönderildi!",
+    "errorMessage": "Gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin."
+  },
+
+  "footer": {
+    "logoAlt": "Light For Gaza",
+    "description": "Gazze halkına bağış toplayarak ve insani yardımları şeffaflık ve etkinlikle dağıtarak destek ve umut sağlamaya çalışıyoruz. Bağışlarınız, muhtaç ailelerin hayatlarını iyileştirmede fark yaratıyor.",
+    "quickLinks": "Hızlı Linkler",
+    "home": "Ana Sayfa",
+    "campaigns": "Kampanyalar",
+    "policies": "Kullanım ve Gizlilik",
+
+    "contact": "İletişim",
+    "about": "Hakkımızda",
+    "contactInfo": "İletişim Bilgileri",
+    "address": "Gazze, Filistin",
+    "phone": "+970 597 529 501",
+    "email": "contact@lightforgaza.org",
+    "copyRight": "© {year} Light For Gaza. Tüm hakları saklıdır."
+  },
+  "navbar": {
+    "key": {
+      "lightForGaza": "LightForGaza",
+      "campaigns": "Kampanyalar",
+      "policies": "Kullanım ve Gizlilik",
+
+      "contactUs": "Bize Ulaşın",
+      "termsOfUse": "Kullanım Şartları",
+      "privacyPolicy": "Gizlilik Politikası",
+      "aboutPlatform": "Platform Hakkında",
+      "support": "Platformu Destekle",
+      "signUp": "Kayıt Ol",
+      "login": "Giriş Yap",
+      "profile": "Profil",
+      "logout": "Çıkış Yap"
+    }
+  },
+  "register": {
+    "title": "Yeni Hesap Oluştur",
+    "fullName": "Ad Soyad",
+    "placeholderName": "Ad Soyad",
+    "email": "E-posta",
+    "placeholderEmail": "email@example.com",
+    "phone": "Telefon Numarası",
+    "placeholderPhone": "059xxxxxxx veya 056xxxxxxx",
+    "nationalId": "Ulusal Kimlik No",
+    "placeholderNationalId": "9 veya 10 haneli",
+    "dateOfBirth": "Doğum Tarihi",
+    "governorate": "İl",
+    "uploadImage": "Profil Resmi (gerekli)",
+    "chooseImage": "Bir resim seçmek için tıklayın veya sürükleyip bırakın",
+    "password": "Şifre",
+    "placeholderPassword": "••••••••",
+    "acceptPoliciesPrefix": "Kabul ediyorum",
+    "terms": "Şartları",
+    "and": "ve",
+    "privacy": "Gizlilik Politikasını",
+    "createAccount": "Hesap Oluştur",
+    "haveAccount": "Zaten bir hesabınız var mı?",
+    "login": "Giriş Yap",
+    "errors": {
+      "requiredName": "Lütfen tam adınızı girin.",
+      "invalidEmail": "Geçersiz e-posta adresi.",
+      "shortPassword": "Şifre en az 6 karakter olmalıdır.",
+      "invalidPhone": "Geçersiz telefon numarası. 059 veya 056 ile başlamalı ve ardından 7 hane gelmelidir.",
+      "invalidNationalId": "Ulusal Kimlik No 9 veya 10 haneli olmalıdır.",
+      "requiredDob": "Lütfen doğum tarihinizi seçin.",
+      "futureDob": "Doğum tarihi geçmişte olmalıdır.",
+      "requiredImage": "Profil resmi gereklidir.",
+      "acceptPolicies": "Şartlar ve Gizlilik Politikasını kabul etmelisiniz.",
+      "uploadFail": "Resim yükleme başarısız oldu, lütfen tekrar deneyin.",
+      "registerFail": "Kayıt sırasında bir hata oluştu.",
+      "loginFail": "Kayıt sonrası giriş yapılamadı.",
+      "networkError": "Sunucu ile bağlantı hatası oluştu."
+    }
+  },
+  "login": {
+    "title": "Giriş Yap",
+    "email": "E-posta",
+    "placeholderEmail": "email@example.com",
+    "password": "Şifre",
+    "placeholderPassword": "••••••••",
+    "submit": "Giriş Yap",
+    "noAccount": "Hesabınız yok mu?",
+    "register": "Hesap Oluştur",
+    "adminLogin": "Yönetici Girişi",
+    "errors": {
+      "invalidCredentials": "E-posta veya şifre yanlış"
+    }
+  },
+
+  "welcome": "Sitemize hoş geldiniz!"
+}

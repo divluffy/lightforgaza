@@ -1,0 +1,250 @@
+{
+  "g": {
+    "home": "Home"
+  },
+
+  "policies": {
+    "title": "Terms of Use & Privacy Policy",
+    "terms": {
+      "title": "Terms of Use",
+      "intro": "Welcome to our platform. By accessing or using our services, you agree to abide by these Terms of Use. Please read them carefully before using the site.",
+      "eligibility": {
+        "title": "User Eligibility",
+        "desc": "You must be at least 18 years old to create an account, donate, or start a fundraising campaign on our platform. By registering, you represent that you meet this age requirement."
+      },
+      "donors": {
+        "title": "Donor Responsibilities",
+        "rule1": "Provide accurate and truthful personal information when making a donation.",
+        "rule2": "Use valid and legally obtained payment methods (e.g., credit/debit cards, e-wallets).",
+        "rule3": "Refrain from using stolen or fraudulent payment instruments.",
+        "rule4": "Respect any applicable laws and regulations in your jurisdiction regarding charitable contributions.",
+        "rule5": "Understand that donations are final and non-refundable unless explicitly stated otherwise."
+      },
+      "owners": {
+        "title": "Campaign Owner Obligations",
+        "rule1": "Create clear, honest, and transparent descriptions of the fundraising purpose.",
+        "rule2": "Use the collected funds exclusively for the stated campaign objectives.",
+        "rule3": "Provide timely updates to donors on how their contributions are used.",
+        "rule4": "Prohibit any form of fraudulent or misleading campaign content.",
+        "rule5": "Maintain open communication channels with donors and respond to inquiries promptly."
+      },
+      "donationMethods": {
+        "title": "Donation Methods & Fund Disbursement",
+        "desc": "We accept donations through multiple channels to ensure flexibility and convenience for donors worldwide. Below are the available methods:",
+        "method1": "Credit/Debit Cards (Visa, MasterCard, etc.) via secure payment gateway.",
+        "method2": "E-wallets such as PayPal, [Local Mobile Wallet Names], or other electronic wallets.",
+        "method3": "Cryptocurrencies including USDT, BTC (Bitcoin), SOL (Solana), and others through our partnered crypto processors.",
+        "method4": "Bank transfers in supported regions (SWIFT/IBAN), when available.",
+        "receiptInsiders": "Campaign owners based in Gaza will receive funds via internal bank transfers among Gaza banks or through direct transfers to their digital currency wallets. Ensure you provide accurate bank or wallet details to facilitate seamless receipt of donations."
+      },
+      "prohibited": {
+        "title": "Prohibited Activities",
+        "rule1": "Creating or promoting fraudulent, deceptive, or misleading campaigns.",
+        "rule2": "Uploading prohibited content, including hate speech, violence, or adult material.",
+        "rule3": "Manipulating donation totals, donor counts, or any system metrics.",
+        "rule4": "Using the platform for unauthorized commercial or political purposes."
+      },
+      "termination": {
+        "title": "Account Termination or Suspension",
+        "desc": "We reserve the right to suspend or terminate any user account (donor or campaign owner) if we determine a violation of these Terms of Use without prior notice. Grounds for immediate action include, but are not limited to, fraudulent activities, misuse of funds, or repeated breaches of policy."
+      }
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "intro": "We value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, share, and safeguard your data when you use our platform.",
+      "collection": {
+        "title": "Information We Collect",
+        "desc": "When you register, donate, or create a campaign, we may collect the following data:",
+        "item1": "Personal details: full name, email address, phone number, and date of birth (for age verification).",
+        "item2": "Billing and payment information: credit/debit card details, e-wallet credentials, or bank account information when you make a donation.",
+        "item3": "Campaign details: title, description, fundraising goals, and any media you upload (images, videos).",
+        "item4": "Usage data: IP address, device information, browser type, pages visited, and other analytics data collected via cookies and similar technologies."
+      },
+      "use": {
+        "title": "How We Use Your Information",
+        "item1": "To process donations, disburse funds to campaign owners, and manage refunds when applicable.",
+        "item2": "To send transactional notifications, campaign updates, and customer support communications.",
+        "item3": "To improve our platform: analyze user behavior, monitor performance, and develop new features tailored to our community’s needs."
+      },
+      "sharing": {
+        "title": "Information Sharing and Disclosure",
+        "desc": "We do not sell your personal data. However, we may share certain information with:",
+        "item1": "Payment processors and financial institutions solely to facilitate donation transactions and fund disbursements.",
+        "item2": "Service providers (hosting, analytics, customer support) under strict confidentiality agreements.",
+        "item3": "Law enforcement or regulatory bodies if required by applicable laws, subpoenas, or legal processes to protect our rights or prevent fraud."
+      },
+      "cookies": {
+        "title": "Cookies & Tracking Technologies",
+        "desc": "We use cookies, web beacons, and similar tracking technologies to:",
+        "list": [
+          "Authenticate users and maintain secure sessions.",
+          "Personalize content, remember language preferences, and enhance user experience.",
+          "Collect analytics data to understand user interactions and improve site performance."
+        ]
+      },
+      "rights": {
+        "title": "Your Privacy Rights",
+        "item1": "Right to access: You can request a copy of the personal information we hold about you.",
+        "item2": "Right to rectification: You may correct inaccurate or incomplete data.",
+        "item3": "Right to erasure: You can request deletion of your data, subject to legal obligations or legitimate interests we must retain.",
+        "item4": "Right to object: You may object to certain processing activities, including marketing communications."
+      },
+      "security": {
+        "title": "Data Security",
+        "desc": "We implement technical and organizational measures to protect your information against unauthorized access, alteration, disclosure, or destruction. These measures include SSL/TLS encryption, secure servers, and regular security audits."
+      },
+      "children": {
+        "title": "Children’s Privacy",
+        "desc": "Our platform is intended for users aged 18 and above. We do not knowingly collect personal data from minors under 18. If we become aware of any information collected from a child under 18, we will promptly delete it."
+      },
+      "changes": {
+        "title": "Policy Updates",
+        "desc": "We may revise this Privacy Policy periodically. When significant changes occur, we will notify you by posting a prominent notice on our site or sending an email. Continued use of the platform after updates signifies your acceptance."
+      },
+      "contact": {
+        "title": "Contact Information",
+        "desc": "If you have any questions or concerns about our Privacy Policy, please contact us at:\nsupport@example.com\nOur data protection officer will respond within 30 days."
+      }
+    }
+  },
+
+  "about": {
+    "title": "About Us",
+    "heading": "Noor Platform for Gaza",
+    "intro": "We are the Noor Platform for Gaza team, dedicated to helping people and families in the Gaza Strip create and manage their fundraising campaigns with maximum transparency and security—especially under the siege and discrimination faced on major fundraising sites. Our goal is to offer a direct channel that gathers donations and delivers them safely to those in need inside Gaza.",
+    "vision": "Our vision is to make it easy for our people in Gaza to launch their campaigns and attract donations on their behalf, and to expedite the arrival of support from abroad to Gaza via internal transfers or trusted e-wallets.",
+    "how": {
+      "title": "How the Platform Works",
+      "step1": "Sign up for a free account on the platform in just a few minutes.",
+      "step2": "Launch a new campaign with a detailed description of your needs and goals.",
+      "step3": "Share your campaign link with friends, family, and on social media.",
+      "step4": "Receive donations easily and securely via internal transfers or electronic wallets, with full tracking of incoming funds."
+    },
+    "team": {
+      "title": "Our Team",
+      "founder": {
+        "name": "Ibrahim Jomaa",
+        "role": "Founder & Platform Manager"
+      },
+      "membersIntro": "The team consists of a group of specialists, each with their own role in managing and operating the platform efficiently:",
+      "member1": "Campaign Manager: Oversees the creation and support of fundraising campaigns, ensuring full transparency.",
+      "member2": "Public Relations Officer: Manages communication with donors and partners, building trust and credibility.",
+      "member3": "Marketing Manager: Designs strategies to attract donors and raise awareness about Gaza’s needs.",
+      "member4": "Technical Support Team: Develops the platform and ensures it runs smoothly under high load."
+    },
+    "cta": {
+      "title": "Be Part of the Change",
+      "desc": "Join today and launch your own campaign or support one of our trusted campaigns to ensure help reaches those who need it most. We guarantee full transparency and real-time tracking of all donations.",
+      "createCampaign": "Create Your Campaign",
+      "donate": "Donate Now"
+    }
+  },
+
+  "contact": {
+    "title": "Contact Us",
+    "description": "If you have any inquiries, suggestions, or collaboration requests, please fill out the form below and we'll get back to you as soon as possible. Thank you for your support!",
+    "fullNameLabel": "Full Name",
+    "fullNamePlaceholder": "Enter your full name",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "example@mail.com",
+    "phoneLabel": "Phone Number",
+    "phonePlaceholder": "+962 7 1234 5678",
+    "subjectLabel": "Subject",
+    "subjectPlaceholder": "Subject of your inquiry",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Write your message here...",
+    "submitButton": "Send Message",
+    "successMessage": "Your message has been sent successfully!",
+    "errorMessage": "An error occurred while sending. Please try again later."
+  },
+
+  "footer": {
+    "logoAlt": "Light For Gaza",
+    "description": "We work to provide support and hope to the people of Gaza by collecting donations and distributing humanitarian aid with transparency and efficiency. Your donations make a difference in improving the lives of needy families.",
+    "quickLinks": "Quick Links",
+    "home": "Home",
+    "campaigns": "Campaigns",
+    "policies": "Usage and Privacy",
+
+    "contact": "Contact Us",
+    "about": "About Us",
+    "contactInfo": "Contact Information",
+    "address": "Gaza, Palestine",
+    "phone": "+970 597 529 501",
+    "email": "contact@lightforgaza.org",
+    "copyRight": "© {year} Light For Gaza. All rights reserved."
+  },
+  "navbar": {
+    "key": {
+      "lightForGaza": "Light For Gaza",
+      "campaigns": "Campaigns",
+      "policies": "Usage and Privacy",
+
+      "contactUs": "Contact Us",
+      "termsOfUse": "Terms of Use",
+      "privacyPolicy": "Privacy Policy",
+      "aboutPlatform": "About Platform",
+      "support": "Support Platform",
+      "signUp": "Sign Up",
+      "login": "Login",
+      "profile": "Profile",
+      "logout": "Logout"
+    }
+  },
+
+  "register": {
+    "title": "Create a New Account",
+    "fullName": "Full Name",
+    "placeholderName": "Full Name",
+    "email": "Email",
+    "placeholderEmail": "email@example.com",
+    "phone": "Phone Number",
+    "placeholderPhone": "059xxxxxxx or 056xxxxxxx",
+    "nationalId": "National ID Number",
+    "placeholderNationalId": "9 or 10 digits",
+    "dateOfBirth": "Date of Birth",
+    "governorate": "Governorate",
+    "uploadImage": "Profile Picture (required)",
+    "chooseImage": "Click to choose an image or drag and drop",
+    "password": "Password",
+    "placeholderPassword": "••••••••",
+    "acceptPoliciesPrefix": "I agree to the",
+    "terms": "Terms",
+    "and": "and",
+    "privacy": "Privacy Policy",
+    "createAccount": "Create Account",
+    "haveAccount": "Already have an account?",
+    "login": "Log in",
+    "errors": {
+      "requiredName": "Please enter your full name.",
+      "invalidEmail": "Invalid email address.",
+      "shortPassword": "Password must be at least 6 characters.",
+      "invalidPhone": "Invalid phone number. It should start with 059 or 056 followed by 7 digits.",
+      "invalidNationalId": "National ID must be 9 or 10 digits.",
+      "requiredDob": "Please select your date of birth.",
+      "futureDob": "Date of birth must be in the past.",
+      "requiredImage": "Profile picture is required.",
+      "acceptPolicies": "You must accept the Terms and Privacy Policy.",
+      "uploadFail": "Failed to upload image, please try again.",
+      "registerFail": "An error occurred during registration.",
+      "loginFail": "Unable to log in after registration.",
+      "networkError": "Network error occurred."
+    }
+  },
+
+  "login": {
+    "title": "Log In",
+    "email": "Email",
+    "placeholderEmail": "email@example.com",
+    "password": "Password",
+    "placeholderPassword": "••••••••",
+    "submit": "Log In",
+    "noAccount": "Don’t have an account?",
+    "register": "Create one",
+    "adminLogin": "Admin Log In",
+    "errors": {
+      "invalidCredentials": "Email or password is incorrect"
+    }
+  },
+  "welcome": "Welcome to our site!"
+}

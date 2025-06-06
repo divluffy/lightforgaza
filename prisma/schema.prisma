@@ -1,0 +1,101 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+/// قائمة محافظات و/أو مدن قطاع غزة
+enum GazaGovernorate {
+  GAZA // محافظة غزة
+  NORTH_GAZA // محافظة شمال غزة
+  KHAN_YUNIS // محافظة خان يونس
+  RAFAH // محافظة رفح
+  DEIR_AL_BALAH // محافظة دير البلح
+}
+
+/// قائمة أنماط الحملة
+enum CampaignType {
+  Family
+  Community
+  Education
+  Emergencies
+  Events
+  Medical
+  Volunteer
+  Other
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+/// نموذج المستخدم مع الحقول الإضافية المطلوبة
+model User {
+  id           String          @id @default(uuid())
+  name         String // اسم المستخدم
+  email        String          @unique
+  phone        String // رقم الهاتف
+  nationalId   String          @unique // رقم الهوية الوطنية
+  dateOfBirth  DateTime // تاريخ الميلاد
+  governorate  GazaGovernorate // المحافظة (من مدن قطاع غزة)
+  thumbnailUrl String? // رابط الصورة المصغّرة للمستخدم
+  password     String // كلمة المرور (مشفر)
+  role         Role            @default(USER)
+  campaigns    Campaign[] // الحملات التي أنشأها هذا المستخدم
+  donations    Donation[] // التبرعات التي قدّمها (إذا كان مسجّلًا)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+}
+
+/// نموذج الحملة مع الحقول الإضافية المطلوبة
+model Campaign {
+  id               String       @id @default(uuid())
+  title            String // عنوان الحملة (سنطبق حد أقصى في الـ UI)
+  description      String // وصف الحملة (HTML من المحرر)
+  imageUrl         String // رابط غلاف الحملة (مطلوب)
+  goalAmount       Float // هدف المبلغ بالدولار (1000 إلى 100000)
+  currentAmount    Float        @default(0) // المبلغ الحالي المجمّع
+  donorCount       Int          @default(0) // عدد المتبرعين
+  facebookUrl      String? // رابط فيسبوك مخصص للحملة (اختياري)
+  instagramUrl     String? // رابط إنستغرام مخصص للحملة (اختياري)
+  tiktokUrl        String? // رابط تيكتوك مخصص للحملة (اختياري)
+  otherSocialLinks Json? // أي روابط اجتماعية إضافية في شكل JSON (اختياري)
+  videoLinks       Json? // مصفوفة من روابط الفيديو (يوتيوب أو مباشر أو كود مضمن)
+  thankYouMessage  String       @db.VarChar(200) // رسالة شكر قصيرة (<200 حرف)
+  campaignType     CampaignType // نوع الحملة (مطلوب)
+  ownerId          String // مُعرّف صاحب الحملة (مستخدم مسجّل)
+  owner            User         @relation(fields: [ownerId], references: [id])
+  donations        Donation[] // التبرعات المرتبطة بهذه الحملة
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+/// نموذج التبرع (Donor) مخصّص للضيوف أو للمستخدمين المسجّلين
+model Donation {
+  id           String   @id @default(uuid())
+  amount       Float // المبلغ الذي تبرّع به
+  donorName    String? // اسم المتبرّع (في حال كان ضيفًا أو اختياري للمستخدم)
+  donorMessage String? // رسالة المتبرّع إلى الحملة (اختياري)
+  userId       String? // إذا كان المتبرِّع مستخدمًا مسجّلًا
+  user         User?    @relation(fields: [userId], references: [id])
+  campaignId   String // مُعرّف الحملة
+  campaign     Campaign @relation(fields: [campaignId], references: [id])
+  createdAt    DateTime @default(now())
+}
+
+/// نموذج لحفظ طلبات التواصل الواردة من المستخدمين
+model ContactRequest {
+  id        String   @id @default(uuid())
+  fullName  String
+  email     String
+  phone     String
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
+}
