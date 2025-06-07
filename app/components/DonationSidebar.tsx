@@ -19,6 +19,11 @@ import {
   TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 import { ethers } from "ethers";
+import PhantomImg from "../assets/phantom.png";
+import CoinbaseImg from "../assets/coinbase.png";
+import TrustImg from "../assets/trust.png";
+import MetamaskImg from "../assets/metamask.png";
+import Image from "next/image";
 
 type Props = {
   campaignId: string;
@@ -611,13 +616,34 @@ export default function DonationSidebar({
             {isLoading ? (
               <span className="loading loading-spinner"></span>
             ) : selectedWallet === "phantom" ? (
-              <FaBitcoin size={20} />
+              <Image
+                src={PhantomImg}
+                alt="logo-phantom-wallet"
+                width={25}
+                height={25}
+                className="rounded-lg"
+              />
             ) : selectedWallet === "metamask" ? (
-              <SiEthereum size={20} />
+              <Image
+                src={MetamaskImg}
+                alt="logo-Metamask-wallet"
+                width={25}
+                height={30}
+              />
             ) : selectedWallet === "coinbase" ? (
-              <SiCoinbase size={20} />
+              <Image
+                src={CoinbaseImg}
+                alt="logo-Coinbase-wallet"
+                width={25}
+                height={25}
+              />
             ) : (
-              <FaWallet size={20} />
+              <Image
+                src={TrustImg}
+                alt="logo-Trust-wallet"
+                width={25}
+                height={25}
+              />
             )}
             {isLoading ? "جارٍ المعاملة..." : "تبرّع الآن"}
           </button>
@@ -657,7 +683,7 @@ export default function DonationSidebar({
         <h3 className="text-xl font-semibold mb-4 text-center">
           سبب اختيار وتحويل التبرّع
         </h3>
-        <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 text-center">
+        <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 text-start+++++++++++++++++++++">
           تم اختيار هذه المحافظ (Phantom، MetaMask، Coinbase Wallet، Trust
           Wallet) نظرًا للوضع المالي الصعب والحصار المفروض على قطاع غزة. هذه
           الطرق توفر فرصًا للحصول على العملات الرقمية بسهولة وتحويل التبرعات
@@ -665,7 +691,7 @@ export default function DonationSidebar({
           وصول أكبر عدد من التبرعات إلى المحتاجين بأقل تكاليف ورسوم ممكنة،
           وتفادي التعطيلات البنكية والإجراءات الروتينية المعقدة.
         </p>
-        <div className="space-y-3 text-center">
+        <div className="space-y-3 text-start">
           <a
             href="https://example.com/phantom-guide"
             target="_blank"
@@ -742,28 +768,50 @@ export default function DonationSidebar({
             onClick={() => openModalWithWallet("phantom")}
             className="btn btn-primary flex items-center justify-center gap-2 py-3 rounded-xl"
           >
-            <FaBitcoin size={20} />
+            <Image
+              src={PhantomImg}
+              alt="logo-phantom-wallet"
+              width={25}
+              height={25}
+              className="rounded-lg"
+            />
             Phantom
           </button>
+
           <button
             onClick={() => openModalWithWallet("metamask")}
             className="btn btn-warning flex items-center justify-center gap-2 py-3 rounded-xl"
           >
-            <SiEthereum size={20} />
+            <Image
+              src={MetamaskImg}
+              alt="logo-Metamask-wallet"
+              width={25}
+              height={30}
+            />
             MetaMask
           </button>
           <button
             onClick={() => openModalWithWallet("coinbase")}
             className="btn btn-info flex items-center justify-center gap-2 py-3 rounded-xl"
           >
-            <SiCoinbase size={20} />
+            <Image
+              src={CoinbaseImg}
+              alt="logo-Coinbase-wallet"
+              width={25}
+              height={25}
+            />
             Coinbase
           </button>
           <button
             onClick={() => openModalWithWallet("trust")}
             className="btn btn-success flex items-center justify-center gap-2 py-3 rounded-xl"
           >
-            <FaWallet size={20} />
+            <Image
+              src={TrustImg}
+              alt="logo-Trust-wallet"
+              width={25}
+              height={25}
+            />
             Trust Wallet
           </button>
         </div>
@@ -771,7 +819,7 @@ export default function DonationSidebar({
         <div className="flex items-center justify-center">
           <button
             onClick={() => setShowNoteModal(true)}
-            className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 flex items-center gap-1"
+            className="cursor-pointer text-sm text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 flex items-center gap-1"
           >
             <FiInfo /> سبب اختيار طرق الدفع
           </button>
