@@ -22,13 +22,12 @@ export async function POST(req: NextRequest) {
     facebookUrl?: string;
     instagramUrl?: string;
     tiktokUrl?: string;
-    otherSocialLinks?: any; // أي روابط إضافية
+    otherSocialLinks?: any;
     videoLinks?: { type: string; value: string }[];
     thankYouMessage: string;
     campaignType: string;
     imageUrl: string;
   };
-
   try {
     body = await req.json();
   } catch {
@@ -49,7 +48,7 @@ export async function POST(req: NextRequest) {
     imageUrl,
   } = body;
 
-  // تحقق من جميع الحقول المطلوبة:
+  // تحقق من جميع الحقول المطلوبة
   if (
     !title?.trim() ||
     title.length > 100 ||
@@ -64,7 +63,6 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
-
   if (goalAmount < 1000 || goalAmount > 100000) {
     return NextResponse.json(
       { error: "هدف المبلغ يجب أن يكون بين 1,000 و 100,000 دولار" },
@@ -72,7 +70,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // تأكد من نوع الحملة
+  // تحقق من نوع الحملة
   const validTypes = [
     "Family",
     "Community",
@@ -87,8 +85,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "نوع الحملة غير صالح" }, { status: 400 });
   }
 
-  // (روابط التواصل اختياري، لذا لا نتحقق منها هنا بالضرورة)
-  // videoLinks: إذا وصل كمصفوفة، نتأكد إن كل كائن موجود به { type, value }
+  // تنقية روابط الفيديو
   const sanitizedVideoLinks =
     Array.isArray(videoLinks) && videoLinks.length > 0
       ? videoLinks.filter(
@@ -97,7 +94,6 @@ export async function POST(req: NextRequest) {
         )
       : undefined;
 
-  // محاولة إنشاء الحملة في قاعدة البيانات
   try {
     const campaign = await prisma.campaign.create({
       data: {
@@ -113,10 +109,12 @@ export async function POST(req: NextRequest) {
         thankYouMessage: thankYouMessage.trim(),
         campaignType: campaignType as any,
         ownerId: token.sub!,
+        // جديد: جميع الحملات المنشأة تنتظر موافقة الإدارة
+        approved: false,
       },
     });
 
-    return NextResponse.json({ campaign });
+    return NextResponse.json({ campaign }, { status: 201 });
   } catch (err: any) {
     console.error("Error creating campaign:", err);
     return NextResponse.json(

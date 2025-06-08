@@ -74,6 +74,7 @@ model Campaign {
   donations        Donation[] // التبرعات المرتبطة بهذه الحملة
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
+  approved         Boolean      @default(false) // ← تمت الإضافة
 }
 
 /// نموذج التبرع (Donor) مخصّص للضيوف أو للمستخدمين المسجّلين

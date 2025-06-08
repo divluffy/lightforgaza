@@ -1,6 +1,5 @@
-// app\(admin)\admin\login\page.tsx
+// app/(admin)/admin/login/page.tsx
 "use client";
-
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
@@ -18,7 +17,6 @@ export default function AdminLoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // إذا المسؤول مسجّل دخول، نعيده مباشرةً للوحة التحكم
   useEffect(() => {
     if (status === "loading") return;
     if (session?.user?.role === "ADMIN") {
@@ -46,10 +44,13 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-base-200 px-4 py-8">
-      <div className="card w-full max-w-md bg-base-100 shadow-md">
+    <div
+      className="flex min-h-screen items-center justify-center bg-base-200 px-4 py-8"
+      data-theme="light"
+    >
+      <div className="card w-full max-w-md bg-white shadow-md rounded-lg">
         <div className="card-body space-y-6">
-          <h2 className="text-3xl font-bold text-center">
+          <h2 className="text-3xl font-semibold text-center text-primary">
             {t("login_admin.adminTitle")}
           </h2>
 
@@ -92,22 +93,18 @@ export default function AdminLoginPage() {
 
             <button
               type="submit"
-              className={`btn btn-primary w-full ${
-                loading ? "btn-disabled" : ""
-              }`}
+              className={`btn btn-primary w-full ${loading ? "loading" : ""}`}
               disabled={loading}
             >
-              {loading ? <Spinner /> : t("login_admin.submit")}
+              {!loading ? t("login_admin.submit") : <Spinner />}
             </button>
           </form>
 
-          <div className="mt-4 text-center space-y-2">
-            <p>
-              <Link href="/auth/login" className="text-primary hover:underline">
-                {t("login_admin.backToUser")}
-              </Link>
-            </p>
-          </div>
+          <p className="mt-4 text-center text-sm">
+            <Link href="/auth/login" className="text-primary hover:underline">
+              {t("login_admin.backToUser")}
+            </Link>
+          </p>
         </div>
       </div>
     </div>

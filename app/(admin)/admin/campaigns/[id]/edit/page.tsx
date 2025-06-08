@@ -1,6 +1,5 @@
-// app/admin/campaigns/[id]/edit/page.tsx
+// app/(admin)/admin/campaigns/[id]/edit/page.tsx
 "use client";
-
 import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -10,7 +9,6 @@ type CampaignData = {
   title: string;
   description: string;
   goalAmount: number;
-  ownerId: string;
 };
 
 export default function AdminEditCampaignPage() {
@@ -26,14 +24,13 @@ export default function AdminEditCampaignPage() {
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // جلب بيانات الحملة أولًا
   useEffect(() => {
     if (status === "loading") return;
     if (!session || session.user.role !== "ADMIN") {
-      router.push("/auth/login?callbackUrl=/admin/campaigns");
+      router.push("/admin/login");
       return;
     }
-    fetch(`/api/campaigns/${id}`)
+    fetch(`/api/admin/campaigns/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error("الحملة غير موجودة");
         return res.json();
@@ -67,7 +64,7 @@ export default function AdminEditCampaignPage() {
     }
 
     setLoading(true);
-    const res = await fetch(`/api/campaigns/${id}`, {
+    const res = await fetch(`/api/admin/campaigns/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -92,7 +89,6 @@ export default function AdminEditCampaignPage() {
       </div>
     );
   }
-
   if (error) {
     return (
       <div className="p-4">
@@ -106,7 +102,7 @@ export default function AdminEditCampaignPage() {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">تعديل حملة</h1>
-      <div className="card bg-base-100 shadow w-full max-w-lg">
+      <div className="card bg-white shadow w-full max-w-lg">
         <div className="card-body">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -121,7 +117,6 @@ export default function AdminEditCampaignPage() {
                 required
               />
             </div>
-
             <div>
               <label className="label">
                 <span className="label-text">وصف الحملة</span>
@@ -134,7 +129,6 @@ export default function AdminEditCampaignPage() {
                 required
               />
             </div>
-
             <div>
               <label className="label">
                 <span className="label-text">هدف المبلغ (USD)</span>
@@ -153,20 +147,18 @@ export default function AdminEditCampaignPage() {
                 required
               />
             </div>
-
             {error && (
               <div className="alert alert-error">
                 <span>{error}</span>
               </div>
             )}
-
             <div className="card-actions justify-end">
               <button
                 type="submit"
                 className={`btn btn-primary ${loading ? "loading" : ""}`}
                 disabled={loading}
               >
-                {loading ? "" : "حفظ التعديلات"}
+                حفظ التعديلات
               </button>
               <button
                 type="button"

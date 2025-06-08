@@ -1,9 +1,9 @@
-// app/admin/donations/page.tsx
+// app/(admin)/admin/donations/page.tsx
 "use client";
-
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 type Donation = {
   id: string;
@@ -11,6 +11,7 @@ type Donation = {
   createdAt: string;
   donor: { name: string | null; email: string };
   campaign: { title: string };
+  donorName?: string | null; // للضيوف
 };
 
 export default function AdminDonationsPage() {
@@ -21,13 +22,12 @@ export default function AdminDonationsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // جلب التبرعات بعد التحقّق من دور Admin
   useEffect(() => {
     if (status === "loading") return;
     if (!session || session.user.role !== "ADMIN") {
-      router.push("/auth/login?callbackUrl=/admin/donations");
+      router.push("/admin/login");
     } else {
-      fetch("/api/donations")
+      fetch("/api/admin/donations")
         .then((res) => {
           if (!res.ok) throw new Error("فشل في جلب البيانات");
           return res.json();
@@ -50,7 +50,6 @@ export default function AdminDonationsPage() {
       </div>
     );
   }
-
   if (error) {
     return (
       <div className="p-4">
@@ -81,7 +80,7 @@ export default function AdminDonationsPage() {
             <tbody>
               {donations.map((don) => (
                 <tr key={don.id}>
-                  <td>{don.donor.name || don.donor.email}</td>
+                  <td>{don.donor.name || don.donor.email || "ضيف"}</td>
                   <td>{don.amount} USD</td>
                   <td>{don.campaign.title}</td>
                   <td>
@@ -92,12 +91,12 @@ export default function AdminDonationsPage() {
                     })}
                   </td>
                   <td>
-                    <a
+                    <Link
                       href={`/admin/donations/${don.id}`}
                       className="btn btn-sm btn-outline"
                     >
                       تفاصيل
-                    </a>
+                    </Link>
                   </td>
                 </tr>
               ))}

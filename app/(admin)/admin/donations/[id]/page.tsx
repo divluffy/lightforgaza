@@ -1,6 +1,5 @@
-// app/admin/donations/[id]/page.tsx
+// app/(admin)/admin/donations/[id]/page.tsx
 "use client";
-
 import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -11,6 +10,7 @@ type DonationDetail = {
   createdAt: string;
   donor: { name: string | null; email: string };
   campaign: { title: string };
+  donorMessage?: string;
 };
 
 export default function AdminDonationDetail() {
@@ -25,10 +25,10 @@ export default function AdminDonationDetail() {
   useEffect(() => {
     if (status === "loading") return;
     if (!session || session.user.role !== "ADMIN") {
-      router.push("/auth/login?callbackUrl=/admin/donations");
+      router.push("/admin/login");
       return;
     }
-    fetch(`/api/donations/${id}`)
+    fetch(`/api/admin/donations/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error("التبرع غير موجود");
         return res.json();
@@ -50,7 +50,6 @@ export default function AdminDonationDetail() {
       </div>
     );
   }
-
   if (error) {
     return (
       <div className="p-4">
@@ -60,15 +59,12 @@ export default function AdminDonationDetail() {
       </div>
     );
   }
-
-  if (!donation) {
-    return null;
-  }
+  if (!donation) return null;
 
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">تفاصيل التبرع</h1>
-      <div className="card bg-base-100 shadow max-w-md">
+      <div className="card bg-white shadow max-w-md">
         <div className="card-body space-y-4">
           <p>
             <span className="font-medium">المانح:</span>{" "}
@@ -81,6 +77,12 @@ export default function AdminDonationDetail() {
           <p>
             <span className="font-medium">المبلغ:</span> {donation.amount} USD
           </p>
+          {donation.donorMessage && (
+            <p>
+              <span className="font-medium">رسالة:</span>{" "}
+              {donation.donorMessage}
+            </p>
+          )}
           <p>
             <span className="font-medium">التاريخ:</span>{" "}
             {new Date(donation.createdAt).toLocaleString("ar-EG", {
