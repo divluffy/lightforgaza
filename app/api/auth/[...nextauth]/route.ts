@@ -1,6 +1,6 @@
 // app/api/auth/[...nextauth]/route.ts
 
-import NextAuth, { AuthOptions, Session } from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { compare } from "bcryptjs";
@@ -10,6 +10,9 @@ export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
+  },
+  pages: {
+    signIn: "/auth/login",
   },
   providers: [
     CredentialsProvider({
@@ -21,17 +24,16 @@ export const authOptions: AuthOptions = {
           placeholder: "email@example.com",
         },
         password: { label: "Password", type: "password" },
+        adminLogin: { label: "AdminLogin", type: "hidden" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials.password) {
           throw new Error("Email and password required");
         }
 
-        // جلب المستخدم كاملًا من قاعدة البيانات
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
-
         if (!user) {
           throw new Error("No user found with that email");
         }
@@ -41,7 +43,17 @@ export const authOptions: AuthOptions = {
           throw new Error("Invalid password");
         }
 
-        // نُعيد كل الحقول المطلوبة (كمثال: phone, nationalId, dateOfBirth, governorate، createdAt، updatedAt)
+        const isAdminAttempt = credentials.adminLogin === "true";
+
+        // منع دخول ADMIN عبر صفحة المستخدم العادية
+        if (!isAdminAttempt && user.role === "ADMIN") {
+          throw new Error("Not authorized");
+        }
+        // منع دخول USER عبر صفحة المسؤول
+        if (isAdminAttempt && user.role !== "ADMIN") {
+          throw new Error("Not authorized");
+        }
+
         return {
           id: user.id,
           name: user.name,
@@ -59,43 +71,22 @@ export const authOptions: AuthOptions = {
     }),
   ],
   callbacks: {
-    // إضافة الحقول الإضافية إلى الـ JWT عند تسجيل الدخول
     async jwt({ token, user }) {
       if (user) {
-        // عند تسجيل الدخول لأول مرة، user سيحوي كل الحقول التي رجعناها في authorize()
         token.id = (user as any).id;
-        token.name = (user as any).name;
-        token.email = (user as any).email;
         token.role = (user as any).role;
         token.thumbnailUrl = (user as any).thumbnailUrl;
-        token.phone = (user as any).phone;
-        token.nationalId = (user as any).nationalId;
-        token.dateOfBirth = (user as any).dateOfBirth;
-        token.governorate = (user as any).governorate;
-        token.createdAt = (user as any).createdAt;
-        token.updatedAt = (user as any).updatedAt;
       }
       return token;
     },
-
-    // بناء كائن session.user ليحتوي على جميع الحقول
     async session({ session, token }) {
-      if (session.user && token) {
-        (session.user as any).id = token.id as string;
-        (session.user as any).role = token.role as string;
-        (session.user as any).thumbnailUrl = token.thumbnailUrl as string;
-        (session.user as any).phone = token.phone as string;
-        (session.user as any).nationalId = token.nationalId as string;
-        (session.user as any).dateOfBirth = token.dateOfBirth as string;
-        (session.user as any).governorate = token.governorate as string;
-        (session.user as any).createdAt = token.createdAt as string;
-        (session.user as any).updatedAt = token.updatedAt as string;
+      if (session.user) {
+        (session.user as any).id = token.id;
+        (session.user as any).role = token.role;
+        (session.user as any).thumbnailUrl = token.thumbnailUrl;
       }
       return session;
     },
-  },
-  pages: {
-    signIn: "/auth/login",
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

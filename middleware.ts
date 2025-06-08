@@ -1,4 +1,5 @@
 // middleware.ts
+
 import { getToken } from "next-auth/jwt";
 import { NextResponse, NextRequest } from "next/server";
 import type { JWT } from "next-auth/jwt";
@@ -12,12 +13,13 @@ const publicPaths = [
   "/donations",
   "/auth/login",
   "/auth/register",
+  "/admin/login", // صرنا نعتبر صفحة دخول المسؤول عامة
 ];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // إذا المسار ضمن العامة، نمضي قدماً
+  // إذا المسار عام، نمضي
   if (
     publicPaths.some(
       (path) => pathname === path || pathname.startsWith(path + "/")
@@ -26,23 +28,23 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // نقرأ التوكن من ملفات الكوكيز
   const token = (await getToken({ req, secret })) as JWT | null;
 
-  // مسارات المسؤول
+  // حماية مسارات الـ Admin
   if (pathname.startsWith("/admin")) {
     if (!token) {
-      // غير مسجل → إعادة توجيه لتسجيل الدخول
-      const url = new URL("/auth/login", req.url);
-      url.searchParams.set("callbackUrl", "/admin");
-      return NextResponse.redirect(url);
+      // غير مسجل → تحويل مباشر إلى /admin/login
+      return NextResponse.redirect(new URL("/admin/login", req.url));
     }
     if (token.role !== "ADMIN") {
+      // مسجل ولكن ليس ADMIN → الصفحة الرئيسية
       return NextResponse.redirect(new URL("/", req.url));
     }
     return NextResponse.next();
   }
 
-  // مسار الملف الشخصي
+  // حماية صفحة الملف الشخصي
   if (pathname === "/profile") {
     if (!token) {
       const url = new URL("/auth/login", req.url);
@@ -52,7 +54,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // باقي المسارات مفتوحة للجميع
+  // الباقي مفتوح
   return NextResponse.next();
 }
 

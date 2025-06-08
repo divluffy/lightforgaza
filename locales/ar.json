@@ -1,6 +1,18 @@
 {
-  "g": {
-    "home": "الرئيسية"
+  "login_admin": {
+    "title": "تسجيل دخول المستخدم",
+    "adminTitle": "تسجيل دخول المسؤول",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "placeholderEmail": "أدخل بريدك الإلكتروني",
+    "placeholderPassword": "أدخل كلمة المرور",
+    "submit": "دخول",
+    "noAccount": "لا تملك حسابًا؟",
+    "register": "سجّل الآن",
+    "errors": {
+      "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة"
+    },
+    "backToUser": "العودة لتسجيل دخول المستخدم"
   },
 
   "create_campaign": {

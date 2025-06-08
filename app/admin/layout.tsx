@@ -1,28 +1,17 @@
-// app/admin/layout.tsx
-"use client";
+// app\admin\layout.tsx
 
+"use client";
 import Link from "next/link";
 import { ReactNode } from "react";
 
-type AdminLayoutProps = {
-  children: ReactNode;
-};
-
-export default function AdminLayout({ children }: AdminLayoutProps) {
+type Props = { children: ReactNode };
+export default function AdminLayout({ children }: Props) {
   return (
     <div className="drawer drawer-mobile h-screen">
-      {/* هذا input يتحكّم في فتح/إغلاق الشريط الجانبي على الموبايل */}
       <input id="admin-drawer" type="checkbox" className="drawer-toggle" />
-
-      {/* المحتوى الرئيسي */}
       <div className="drawer-content flex flex-col p-4 overflow-auto">
-        {/* زر لفتح الشريط الجانبي عند العرض الصغير */}
         <div className="lg:hidden mb-4">
-          <label
-            htmlFor="admin-drawer"
-            className="btn btn-square btn-ghost"
-            aria-label="Open Sidebar"
-          >
+          <label htmlFor="admin-drawer" className="btn btn-square btn-ghost">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -39,33 +28,29 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </svg>
           </label>
         </div>
-
-        {/* هنا تُعرض صفحات الـAdmin المختلفة (Dashboard، Campaigns، Donations) */}
         <div className="flex-1">{children}</div>
       </div>
-
-      {/* الشريط الجانبي نفسه */}
       <div className="drawer-side">
         <label htmlFor="admin-drawer" className="drawer-overlay"></label>
         <ul className="menu p-4 w-64 bg-base-100 text-base-content space-y-2">
           <li>
-            <Link href="/admin" className="rounded-lg">
+            <Link href="/admin">
               <span className="font-semibold">الرئيسية</span>
             </Link>
           </li>
           <li>
-            <Link href="/admin/campaigns" className="rounded-lg">
-              <span className="font-semibold">إدارة الحملات</span>
+            <Link href="/admin/campaigns">
+              <span className="font-semibold">الحملات</span>
             </Link>
           </li>
           <li>
-            <Link href="/admin/donations" className="rounded-lg">
-              <span className="font-semibold">إدارة التبرعات</span>
+            <Link href="/admin/donations">
+              <span className="font-semibold">التبرعات</span>
             </Link>
           </li>
           <li className="mt-4">
-            <Link href="/" className="text-red-600 hover:text-red-800">
-              العودة إلى الموقع الرئيسي
+            <Link href="/">
+              <span className="text-red-600">الموقع الرئيسي</span>
             </Link>
           </li>
         </ul>

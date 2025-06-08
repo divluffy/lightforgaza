@@ -1,6 +1,18 @@
 {
-  "g": {
-    "home": "Home"
+  "login_admin": {
+    "title": "User Login",
+    "adminTitle": "Admin Login",
+    "email": "Email",
+    "password": "Password",
+    "placeholderEmail": "Enter your email",
+    "placeholderPassword": "Enter your password",
+    "submit": "Sign In",
+    "noAccount": "Don't have an account?",
+    "register": "Register Now",
+    "errors": {
+      "invalidCredentials": "Invalid email or password"
+    },
+    "backToUser": "Back to User Login"
   },
 
   "create_campaign": {

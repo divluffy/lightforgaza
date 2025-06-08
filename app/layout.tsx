@@ -33,6 +33,8 @@ const mukta = Mukta({
 
 export const metadata: Metadata = {
   title: "Light For Gaza",
+
+  
   description: "Help | Support | Donation",
 };
 
