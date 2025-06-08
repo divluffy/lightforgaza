@@ -12,7 +12,7 @@ async function createAdmin() {
       phone: "0597529501",
       nationalId: "406043388",
       dateOfBirth: new Date(),
-      governorate:"KHAN_YUNIS",
+      governorate: "KHAN_YUNIS",
       role: "ADMIN",
     },
   });

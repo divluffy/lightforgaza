@@ -1,11 +1,9 @@
-// app/campaigns/page.tsx
-
-import { PrismaClient, Campaign } from "@prisma/client";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { useSearchParams } from "next/navigation";
+import { headers } from "next/headers";
 
-// نُعرّف قائمة أنواع الحملة كما في صفحة الإنشاء
+export const dynamic = "force-dynamic";
+
 const campaignTypes = [
   { label: "جميع الأنواع", value: "" },
   { label: "Family", value: "Family" },
@@ -18,87 +16,98 @@ const campaignTypes = [
   { label: "Other", value: "Other" },
 ];
 
-const prisma = new PrismaClient();
-
-type CampaignWithOwner = Campaign & {
+type SearchParams = { search?: string; sort?: string; type?: string };
+type CampaignWithOwner = {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  goalAmount: number;
+  currentAmount: number;
+  campaignType: string;
   owner: { name: string | null; email: string };
 };
 
 export default async function CampaignsPage({
   searchParams,
 }: {
-  searchParams: { search?: string; sort?: string; type?: string };
+  searchParams: Promise<SearchParams>;
 }) {
-  const { search, sort, type } = searchParams;
+  const { search, sort, type } = await searchParams;
 
-  // بناء شرط الـ where بناءً على قيمة البحث والنوع
-  let whereClause: any = {};
-  if (search) {
-    whereClause.title = { contains: search, mode: "insensitive" };
-  }
-  if (type) {
-    whereClause.campaignType = type;
-  }
+  // بناء الاستعلام
+  const params = new URLSearchParams();
+  if (search) params.set("search", search);
+  if (type) params.set("type", type);
+  if (sort) params.set("sort", sort);
+  const queryString = params.toString();
+  const path = queryString ? `/api/campaigns?${queryString}` : `/api/campaigns`;
 
-  // بناء ترتيب النتائج بناءً على قيمة الفرز
-  let orderByClause: any = { createdAt: "desc" }; // الافتراضي: الأحدث أولاً
-  switch (sort) {
-    case "oldest":
-      orderByClause = { createdAt: "asc" };
-      break;
-    case "mostDonations":
-      orderByClause = { currentAmount: "desc" };
-      break;
-    case "leastDonations":
-      orderByClause = { currentAmount: "asc" };
-      break;
-    case "newest":
-    default:
-      orderByClause = { createdAt: "desc" };
-  }
+  // جلب الهيدرز لبناء الـ baseUrl
+  const hdrs = await headers();
+  const proto = hdrs.get("x-forwarded-proto") ?? "http";
+  const host = hdrs.get("host") ?? "";
+  const baseUrl = `${proto}://${host}`;
 
-  // جلب الحملات من قاعدة البيانات حسب الشروط والفرز
-  const campaigns: CampaignWithOwner[] = await prisma.campaign.findMany({
-    where: whereClause,
-    orderBy: orderByClause,
-    include: {
-      owner: {
-        select: { name: true, email: true },
-      },
-    },
-  });
+  const res = await fetch(`${baseUrl}${path}`, { cache: "no-store" });
+  if (!res.ok) return notFound();
 
-  if (!campaigns) {
-    return notFound();
-  }
+  const { campaigns }: { campaigns: CampaignWithOwner[] } = await res.json();
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="container mx-auto p-8 pt-24">
       <h1 className="text-3xl font-bold mb-6">جميع الحملات</h1>
 
-      {/* صندوق البحث والفرز والفلترة بحسب النوع */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-        {/* فلترة البحث بالكلمة المفتاحية */}
-        <form className="flex items-center gap-2" method="GET">
+      {/* === بحث + فلترة === */}
+      <div className="flex flex-col items-start gap-4 sm:flex-row sm:justify-between">
+        {/* -- نموذج البحث (يبقى ظاهر دائماً) -- */}
+        <form className="flex items-center gap-2 w-full sm:w-auto" method="GET">
           <input
             type="text"
             name="search"
             defaultValue={search || ""}
             placeholder="ابحث بعنوان الحملة..."
-            className="input input-bordered"
+            className="input input-bordered flex-1"
           />
           <button type="submit" className="btn btn-primary">
             بحث
           </button>
         </form>
 
-        {/* فلترة النوع وفلترة الفرز */}
-        <form className="flex items-center gap-2" method="GET">
-          {/* نحتفظ بقيمة البحث في مخفي حتى لا نخسرها عند تغيير الفلترة */}
+        {/* -- الفلترة للجوال: تظهر على الشاشات الصغيرة فقط -- */}
+        <form className="flex items-center gap-2 w-full sm:hidden" method="GET">
           <input type="hidden" name="search" value={search || ""} />
+          <select
+            name="type"
+            defaultValue={type || ""}
+            className="select select-bordered flex-1"
+          >
+            {campaignTypes.map((ct) => (
+              <option key={ct.value} value={ct.value}>
+                {ct.label}
+              </option>
+            ))}
+          </select>
+          <select
+            name="sort"
+            defaultValue={sort || "newest"}
+            className="select select-bordered flex-1"
+          >
+            <option value="newest">الأحدث أولاً</option>
+            <option value="oldest">الأقدم أولاً</option>
+            <option value="mostDonations">الأكثر دعمًا</option>
+            <option value="leastDonations">الأقل دعمًا</option>
+          </select>
+          <button type="submit" className="btn btn-outline">
+            تطبيق
+          </button>
+        </form>
 
-          {/* اختيار نوع الحملة */}
-          <label className="label-text">النوع:</label>
+        {/* -- الفلترة للعرض العادي: تظهر على الشاشات ≥640px -- */}
+        <form className="hidden sm:flex items-center gap-2" method="GET">
+          <input type="hidden" name="search" value={search || ""} />
+          {/* نخفي الليبل على الموبايل باستخدام hidden sm:block */}
+          <label className="hidden sm:block label-text">النوع:</label>
           <select
             name="type"
             defaultValue={type || ""}
@@ -111,8 +120,7 @@ export default async function CampaignsPage({
             ))}
           </select>
 
-          {/* ترتيب النتائج */}
-          <label className="label-text">ترتيب:</label>
+          <label className="hidden sm:block label-text">ترتيب:</label>
           <select
             name="sort"
             defaultValue={sort || "newest"}
@@ -130,11 +138,13 @@ export default async function CampaignsPage({
         </form>
       </div>
 
-      {/* إذا لا توجد حملات بعد */}
+      {/* === عرض النتائج === */}
       {campaigns.length === 0 ? (
-        <p className="text-gray-600">
-          {type ? `لا توجد حملات من نوع "${type}".` : "لا توجد حملات حالياً."}
-        </p>
+        <div className="w-full h-40 flex items-center justify-center">
+          <p className="text-gray-400">
+            {type ? `لا توجد حملات من نوع "${type}".` : "لا توجد حملات حالياً."}
+          </p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {campaigns.map((camp) => (
@@ -144,13 +154,11 @@ export default async function CampaignsPage({
               className="card hover:shadow-lg transition-shadow bg-base-100 shadow"
             >
               <div className="card-body">
-                {/* نستعرض الصورة كصورة غلاف صغيرة */}
                 <img
                   src={camp.imageUrl}
                   alt="Cover"
                   className="h-40 w-full object-cover rounded-lg mb-2"
                 />
-
                 <h2 className="card-title line-clamp-2">{camp.title}</h2>
                 <p className="text-gray-600 line-clamp-3">
                   {camp.description
@@ -159,7 +167,6 @@ export default async function CampaignsPage({
                     .trim()}
                   ...
                 </p>
-
                 <div className="mt-4 space-y-2">
                   <p className="text-sm text-gray-500">
                     أنشأها:{" "}
@@ -167,14 +174,10 @@ export default async function CampaignsPage({
                       {camp.owner.name || camp.owner.email}
                     </span>
                   </p>
-
-                  {/* نوع الحملة */}
                   <p className="text-sm text-gray-500">
                     النوع:{" "}
                     <span className="font-medium">{camp.campaignType}</span>
                   </p>
-
-                  {/* نسبة التقدم */}
                   <div>
                     <div className="text-sm mb-1">
                       {camp.currentAmount} USD من هدف {camp.goalAmount} USD
@@ -183,7 +186,7 @@ export default async function CampaignsPage({
                       className="progress progress-primary w-full"
                       value={camp.currentAmount}
                       max={camp.goalAmount}
-                    ></progress>
+                    />
                   </div>
                 </div>
               </div>

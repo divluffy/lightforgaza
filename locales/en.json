@@ -1,4 +1,21 @@
 {
+  "campaigns": {
+    "title": "All Campaigns",
+    "searchPlaceholder": "Search by campaign title…",
+    "searchButton": "Search",
+    "allTypes": "All Types",
+    "typeLabel": "Type:",
+    "sortLabel": "Sort:",
+    "newestFirst": "Newest First",
+    "oldestFirst": "Oldest First",
+    "mostDonations": "Most Donations",
+    "leastDonations": "Least Donations",
+    "noCampaigns": "No campaigns currently.",
+    "noCampaignsOfType": "No campaigns of type \"{type}\".",
+    "createdBy": "Created by:",
+    "amountRaised": "{current} USD of {goal} USD"
+  },
+
   "login_admin": {
     "title": "User Login",
     "adminTitle": "Admin Login",

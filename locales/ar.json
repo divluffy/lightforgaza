@@ -1,4 +1,20 @@
 {
+  "campaigns": {
+    "title": "جميع الحملات",
+    "searchPlaceholder": "ابحث بعنوان الحملة…",
+    "searchButton": "بحث",
+    "allTypes": "جميع الأنواع",
+    "typeLabel": "النوع:",
+    "sortLabel": "ترتيب:",
+    "newestFirst": "الأحدث أولاً",
+    "oldestFirst": "الأقدم أولاً",
+    "mostDonations": "الأكثر دعمًا",
+    "leastDonations": "الأقل دعمًا",
+    "noCampaigns": "لا توجد حملات حالياً.",
+    "noCampaignsOfType": "لا توجد حملات من نوع \"{type}\".",
+    "createdBy": "أنشأها:",
+    "amountRaised": "{current} USD من هدف {goal} USD"
+  },
   "login_admin": {
     "title": "تسجيل دخول المستخدم",
     "adminTitle": "تسجيل دخول المسؤول",
