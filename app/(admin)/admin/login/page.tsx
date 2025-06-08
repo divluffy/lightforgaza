@@ -1,4 +1,4 @@
-// app/admin/login/page.tsx
+// app\(admin)\admin\login\page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -18,7 +18,7 @@ export default function AdminLoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // لو المسؤول مُسجّل أصلاً نعيده للوحة /admin
+  // إذا المسؤول مسجّل دخول، نعيده مباشرةً للوحة التحكم
   useEffect(() => {
     if (status === "loading") return;
     if (session?.user?.role === "ADMIN") {
@@ -46,8 +46,8 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="flex w-full h-full items-center justify-center bg-base-300 px-4 py-8">
-      <div className="card w-full max-w-md bg-base-100 shadow-lg">
+    <div className="flex min-h-screen items-center justify-center bg-base-200 px-4 py-8">
+      <div className="card w-full max-w-md bg-base-100 shadow-md">
         <div className="card-body space-y-6">
           <h2 className="text-3xl font-bold text-center">
             {t("login_admin.adminTitle")}
@@ -92,7 +92,7 @@ export default function AdminLoginPage() {
 
             <button
               type="submit"
-              className={`btn btn-accent w-full ${
+              className={`btn btn-primary w-full ${
                 loading ? "btn-disabled" : ""
               }`}
               disabled={loading}
@@ -101,11 +101,13 @@ export default function AdminLoginPage() {
             </button>
           </form>
 
-          <p className="mt-4 text-center">
-            <Link href="/auth/login" className="text-secondary hover:underline">
-              {t("login_admin.backToUser")}
-            </Link>
-          </p>
+          <div className="mt-4 text-center space-y-2">
+            <p>
+              <Link href="/auth/login" className="text-primary hover:underline">
+                {t("login_admin.backToUser")}
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>
