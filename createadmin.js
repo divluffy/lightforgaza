@@ -7,8 +7,12 @@ async function createAdmin() {
   await prisma.user.create({
     data: {
       name: "luffy",
-      email: "dev.jomaa2000@gmail.com",
+      email: "de000@gmail.com",
       password: hashed,
+      phone: "0597529501",
+      nationalId: "406043388",
+      dateOfBirth: new Date(),
+      governorate:"KHAN_YUNIS",
       role: "ADMIN",
     },
   });

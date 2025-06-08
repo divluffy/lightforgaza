@@ -20,10 +20,16 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // إذا كان قد تم تسجيل الجلسة بالفعل، نوجّه المستخدم إلى المكان المناسب
   useEffect(() => {
     if (status === "loading") return;
     if (session) {
-      router.push(callbackUrl);
+      // إذا كان الدور admin، نذهب إلى /admin
+      if ((session.user as any)?.role === "ADMIN") {
+        router.push("/admin");
+      } else {
+        router.push(callbackUrl);
+      }
     }
   }, [session, status, router, callbackUrl]);
 
@@ -43,7 +49,8 @@ export default function LoginPage() {
       setError(t("login.errors.invalidCredentials"));
       setLoading(false);
     } else {
-      router.push((res?.url as string) || "/");
+      // هنا لا نعتمد على res.url مباشرة لأننا نتحقق من الدور في effect
+      setLoading(false);
     }
   };
 
@@ -119,11 +126,7 @@ export default function LoginPage() {
                 {t("login.register")}
               </Link>
             </p>
-            <p>
-              <Link href="/admin/login" className="text-error hover:underline">
-                {t("login.adminLogin")}
-              </Link>
-            </p>
+            {/* لقد أزلنا هنا رابط /admin/login */}
           </div>
         </div>
       </div>
