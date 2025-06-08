@@ -27,7 +27,7 @@ import Image from "next/image";
 
 type Props = {
   campaignId: string;
-  initialCurrentAmount?: number;
+  currentAmount?: number;
   goalAmount?: number;
   username?: string;
 };
@@ -123,11 +123,11 @@ const PHANTOM_TOKEN_MINTS: Record<string, string> = {
 
 export default function DonationSidebar({
   campaignId,
-  initialCurrentAmount = 0,
+  currentAmount = 0,
   goalAmount = 0,
   username,
 }: Props) {
-  const [collected, setCollected] = useState<number>(initialCurrentAmount);
+  const [collected, setCollected] = useState<number>(currentAmount);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 

@@ -8,7 +8,7 @@ type DonationDetail = {
   id: string;
   amount: number;
   createdAt: string;
-  donor: { name: string | null; email: string };
+  user: { name: string | null; email: string };
   campaign: { title: string };
   donorMessage?: string;
 };
@@ -24,10 +24,12 @@ export default function AdminDonationDetail() {
 
   useEffect(() => {
     if (status === "loading") return;
-    if (!session || session.user.role !== "ADMIN") {
+    // نستخدم optional chaining لتجنب الخطأ session.user ممكن تكون undefined
+    if (!session?.user || session.user.role !== "ADMIN") {
       router.push("/admin/login");
       return;
     }
+
     fetch(`/api/admin/donations/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error("التبرع غير موجود");
@@ -50,6 +52,7 @@ export default function AdminDonationDetail() {
       </div>
     );
   }
+
   if (error) {
     return (
       <div className="p-4">
@@ -59,6 +62,7 @@ export default function AdminDonationDetail() {
       </div>
     );
   }
+
   if (!donation) return null;
 
   return (
@@ -68,7 +72,8 @@ export default function AdminDonationDetail() {
         <div className="card-body space-y-4">
           <p>
             <span className="font-medium">المانح:</span>{" "}
-            {donation.donor.name || donation.donor.email}
+            {/* عرض بيانات المستخدم بدلاً من donor */}
+            {donation.user.name || donation.user.email}
           </p>
           <p>
             <span className="font-medium">الحملة:</span>{" "}

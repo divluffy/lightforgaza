@@ -7,11 +7,12 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 const secret = process.env.NEXTAUTH_SECRET!;
 
+// ———————————————— GET ————————————————
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> } // ← params is a Promise now
 ) {
-  const { id } = params;
+  const { id } = await params; // ← await it
   const campaign = await prisma.campaign.findUnique({
     where: { id },
   });
@@ -21,22 +22,23 @@ export async function GET(
   return NextResponse.json({ campaign });
 }
 
+// ———————————————— PUT ————————————————
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> } // ← same change
 ) {
   const token = await getToken({ req, secret });
   if (!token) {
     return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
   }
-  const { id } = params;
+
+  const { id } = await params; // ← await params
   const existing = await prisma.campaign.findUnique({
     where: { id },
   });
   if (!existing) {
     return NextResponse.json({ error: "الحملة غير موجودة" }, { status: 404 });
   }
-  // التحقق إن صاحب الطلب هو صاحب الحملة أو Admin
   if (existing.ownerId !== token.sub! && (token as any).role !== "ADMIN") {
     return NextResponse.json(
       { error: "لا تمتلك صلاحيات التعديل" },
@@ -44,7 +46,6 @@ export async function PUT(
     );
   }
 
-  // قراءة جسم الطلب
   let body: {
     title: string;
     description: string;
@@ -77,7 +78,6 @@ export async function PUT(
     imageUrl,
   } = body;
 
-  // التحقق من الحقول الأساسية
   if (
     !title?.trim() ||
     title.length > 100 ||
@@ -100,7 +100,6 @@ export async function PUT(
     );
   }
 
-  // التحقق من نوع الحملة
   const validTypes = [
     "Family",
     "Community",
@@ -115,7 +114,6 @@ export async function PUT(
     return NextResponse.json({ error: "نوع الحملة غير صالح" }, { status: 400 });
   }
 
-  // تجهيز روابط الفيديو إذا جاءت
   const sanitizedVideoLinks =
     Array.isArray(videoLinks) && videoLinks.length > 0
       ? videoLinks.filter(
@@ -153,15 +151,17 @@ export async function PUT(
   }
 }
 
+// ———————————————— DELETE ————————————————
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> } // ← same here
 ) {
   const token = await getToken({ req, secret });
   if (!token) {
     return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
   }
-  const { id } = params;
+
+  const { id } = await params; // ← await it
   const campaign = await prisma.campaign.findUnique({
     where: { id },
   });

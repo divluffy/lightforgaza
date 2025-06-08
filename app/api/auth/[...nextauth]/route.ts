@@ -6,7 +6,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { compare } from "bcryptjs";
 import { prisma } from "../../../lib/prisma";
 
-export const authOptions: AuthOptions = {
+const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
@@ -91,5 +91,6 @@ export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
+// لا نصدر authOptions كي لا تظهر كـ export غير مسموح به في مسار الـ API
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

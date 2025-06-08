@@ -7,21 +7,29 @@ const secret = process.env.NEXTAUTH_SECRET!;
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  // استخراج الـ id من params (Promise)
+  const { id } = await context.params;
+
+  // التحقق من صلاحية المستخدم كمسؤول
   const token = await getToken({ req, secret });
   if (!token || token.role !== "ADMIN") {
     return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
   }
+
+  // جلب بيانات التبرع مع بيانات المستخدم (user) وبيانات الحملة
   const donation = await prisma.donation.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
-      donor: { select: { name: true, email: true } },
+      user: { select: { name: true, email: true } },
       campaign: { select: { title: true } },
     },
   });
+
   if (!donation) {
     return NextResponse.json({ error: "غير موجود" }, { status: 404 });
   }
+
   return NextResponse.json({ donation });
 }

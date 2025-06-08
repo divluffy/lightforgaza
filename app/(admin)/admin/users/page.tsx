@@ -25,23 +25,26 @@ export default function AdminUsersPage() {
 
   useEffect(() => {
     if (status === "loading") return;
-    if (!session || session.user.role !== "ADMIN") {
+
+    // استخدم optional chaining لتجنب `session.user` ممكن تكون undefined
+    if (session?.user?.role !== "ADMIN") {
       router.push("/admin/login");
-    } else {
-      fetch("/api/admin/users")
-        .then((res) => {
-          if (!res.ok) throw new Error("فشل في جلب المستخدمين");
-          return res.json();
-        })
-        .then((data) => {
-          setUsers(data.users || []);
-          setLoading(false);
-        })
-        .catch(() => {
-          setError("حدث خطأ أثناء جلب المستخدمين");
-          setLoading(false);
-        });
+      return;
     }
+
+    fetch("/api/admin/users")
+      .then((res) => {
+        if (!res.ok) throw new Error("فشل في جلب المستخدمين");
+        return res.json();
+      })
+      .then((data) => {
+        setUsers(data.users || []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("حدث خطأ أثناء جلب المستخدمين");
+        setLoading(false);
+      });
   }, [session, status, router]);
 
   if (status === "loading" || loading) {
@@ -51,6 +54,7 @@ export default function AdminUsersPage() {
       </div>
     );
   }
+
   if (error) {
     return (
       <div className="p-4">
@@ -108,10 +112,13 @@ export default function AdminUsersPage() {
                         fetch(`/api/admin/users/${u.id}`, {
                           method: "DELETE",
                         }).then((r) => {
-                          if (r.ok)
+                          if (r.ok) {
                             setUsers((prev) =>
                               prev.filter((x) => x.id !== u.id)
                             );
+                          } else {
+                            alert("فشل في حذف المستخدم");
+                          }
                         });
                       }}
                       className="btn btn-sm btn-error"

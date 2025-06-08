@@ -5,16 +5,19 @@ import { getToken } from "next-auth/jwt";
 
 const secret = process.env.NEXTAUTH_SECRET!;
 
+// الآن params يُستقبل كـ Promise<{ id: string }>
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params;
   const token = await getToken({ req, secret });
   if (!token || token.role !== "ADMIN") {
     return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
   }
+
   const campaign = await prisma.campaign.findUnique({
-    where: { id: params.id },
+    where: { id },
   });
   if (!campaign) {
     return NextResponse.json({ error: "غير موجود" }, { status: 404 });
@@ -24,35 +27,39 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params;
   const token = await getToken({ req, secret });
   if (!token || token.role !== "ADMIN") {
     return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
   }
+
   const body = await req.json();
   const { title, description, goalAmount } = body;
   try {
     const updated = await prisma.campaign.update({
-      where: { id: params.id },
+      where: { id },
       data: { title, description, goalAmount },
     });
     return NextResponse.json({ campaign: updated });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "فشل التحديث" }, { status: 500 });
   }
 }
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params;
   const token = await getToken({ req, secret });
   if (!token || token.role !== "ADMIN") {
     return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
   }
+
   try {
-    await prisma.campaign.delete({ where: { id: params.id } });
+    await prisma.campaign.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "فشل الحذف" }, { status: 500 });

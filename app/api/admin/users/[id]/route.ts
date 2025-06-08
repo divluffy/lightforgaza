@@ -7,14 +7,18 @@ const secret = process.env.NEXTAUTH_SECRET!;
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  // استخرج الـ id من الـ params (Promise)
+  const { id } = await context.params;
+
   const token = await getToken({ req, secret });
   if (!token || token.role !== "ADMIN") {
     return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
   }
+
   const user = await prisma.user.findUnique({
-    where: { id: params.id },
+    where: { id },
     select: {
       id: true,
       name: true,
@@ -25,22 +29,28 @@ export async function GET(
       createdAt: true,
     },
   });
+
   if (!user) {
     return NextResponse.json({ error: "غير موجود" }, { status: 404 });
   }
+
   return NextResponse.json({ user });
 }
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  // استخرج الـ id من الـ params (Promise)
+  const { id } = await context.params;
+
   const token = await getToken({ req, secret });
   if (!token || token.role !== "ADMIN") {
     return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
   }
+
   try {
-    await prisma.user.delete({ where: { id: params.id } });
+    await prisma.user.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "فشل الحذف" }, { status: 500 });

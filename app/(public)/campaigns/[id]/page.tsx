@@ -2,8 +2,8 @@
 import { PrismaClient, GazaGovernorate } from "@prisma/client";
 import { notFound } from "next/navigation";
 import React from "react";
-import DonationSidebar from "../../components/DonationSidebar";
-import ShareSection from "../../components/ShareSection";
+import DonationSidebar from "../../../components/DonationSidebar";
+import ShareSection from "../../../components/ShareSection";
 import {
   FaCheckCircle,
   FaFacebook,
@@ -13,21 +13,15 @@ import {
 
 const prisma = new PrismaClient();
 
+// نضبط نوع الـ props بحيث params يكون Promise<{ id: string }>
+// هذا يتوافق مع PageProps التي تتوقع params كـ Promise<any>
 type Props = {
-  params: { id: string };
-};
-
-// ترجمة enum الخاصة بمحافظات غزة إلى نص عربي
-const governorateLabels: Record<GazaGovernorate, string> = {
-  GAZA: "محافظة غزة",
-  NORTH_GAZA: "محافظة شمال غزة",
-  KHAN_YUNIS: "محافظة خان يونس",
-  RAFAH: "محافظة رفح",
-  DEIR_AL_BALAH: "محافظة دير البلح",
+  params: Promise<{ id: string }>;
 };
 
 export default async function CampaignDetail({ params }: Props) {
-  const { id } = params;
+  // ننتظر الـ params حتى نحصل على الـ id
+  const { id } = await params;
 
   // جلب الحملة مع بيانات صاحبها
   const campaign:
@@ -113,15 +107,22 @@ export default async function CampaignDetail({ params }: Props) {
     .sort((a, b) => b.amount - a.amount)
     .slice(0, 3);
 
+  // ترجمة enum الخاصة بمحافظات غزة إلى نص عربي
+  const governorateLabels: Record<GazaGovernorate, string> = {
+    GAZA: "محافظة غزة",
+    NORTH_GAZA: "محافظة شمال غزة",
+    KHAN_YUNIS: "محافظة خان يونس",
+    RAFAH: "محافظة رفح",
+    DEIR_AL_BALAH: "محافظة دير البلح",
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 pt-32">
       <div className="flex flex-col lg:flex-row lg:space-x-8">
         {/* ===== اليسار: محتوى الحملة ===== */}
         <div className="flex-1 space-y-8">
-          {/* 1) العنوان */}
           <h1 className="text-4xl font-bold">{campaign.title}</h1>
 
-          {/* 2) صورة الغلاف */}
           <div>
             <img
               src={campaign.imageUrl}
@@ -130,12 +131,10 @@ export default async function CampaignDetail({ params }: Props) {
             />
           </div>
 
-          {/* 3) الوصف مع تباعد الأسطر */}
           <div className="whitespace-pre-line text-lg leading-relaxed mb-6">
             {campaign.description}
           </div>
 
-          {/* 4) عرض جميع الفيديوهات إن وجدت */}
           {videoLinks.length > 0 && (
             <div className="mt-6 space-y-4">
               <h2 className="text-2xl font-semibold">فيديوهات الحملة</h2>
@@ -151,7 +150,7 @@ export default async function CampaignDetail({ params }: Props) {
                           src={vl.value.replace("watch?v=", "embed/")}
                           allowFullScreen
                           className="w-full h-full rounded"
-                        ></iframe>
+                        />
                       </div>
                     )}
                     {vl.type === "direct" && (
@@ -159,15 +158,13 @@ export default async function CampaignDetail({ params }: Props) {
                         controls
                         src={vl.value}
                         className="w-full h-auto rounded"
-                      ></video>
+                      />
                     )}
                     {vl.type === "embed" && (
                       <div
                         className="mt-2"
-                        dangerouslySetInnerHTML={{
-                          __html: vl.value,
-                        }}
-                      ></div>
+                        dangerouslySetInnerHTML={{ __html: vl.value }}
+                      />
                     )}
                   </div>
                 ))}
@@ -175,7 +172,6 @@ export default async function CampaignDetail({ params }: Props) {
             </div>
           )}
 
-          {/* 5) معلومات المنشئ مع أيقونات التواصل الاجتماعي */}
           <div className="border rounded-lg p-4 bg-base-100 dark:bg-base-200 shadow flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
             <div className="flex items-center space-x-4">
               {campaign.owner.thumbnailUrl && (
@@ -242,7 +238,6 @@ export default async function CampaignDetail({ params }: Props) {
             </div>
           </div>
 
-          {/* 6) أحدث المتبرعين */}
           <div>
             <h2 className="text-2xl font-semibold mb-4 text-center">
               أحدث المتبرعين
@@ -272,7 +267,6 @@ export default async function CampaignDetail({ params }: Props) {
             </div>
           </div>
 
-          {/* 7) زر الرجوع */}
           <div className="mt-12 text-center">
             <a href="/campaigns" className="btn btn-outline">
               ← العودة إلى قائمة الحملات
